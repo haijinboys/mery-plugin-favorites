@@ -34,7 +34,7 @@ uses
 
 resourcestring
   SName = 'お気に入り';
-  SVersion = '2.0.1';
+  SVersion = '2.0.3';
 
 const
   IDS_MENU_TEXT = 1;
@@ -184,21 +184,21 @@ var
     Text: string);
   begin
     if CheckStrInTable(Text, '-') = itAllInclude then
-      AppendMenuW(PopupArray[TabIndentLevel], MF_SEPARATOR, 0, '')
+      AppendMenu(PopupArray[TabIndentLevel], MF_SEPARATOR, 0, '')
     else if CheckDrivePath(Text) or CheckUNCPath(Text) then
     begin
       if DirectoryExists2(Text) then
-        AppendMenuW(PopupArray[TabIndentLevel], MenuOption(False, True), LineIndex + 1, PChar(ExtractFileName(Text) + Space + FolderAddText))
+        AppendMenu(PopupArray[TabIndentLevel], MenuOption(False, True), LineIndex + 1, PChar(ExtractFileName(Text) + Space + FolderAddText))
       else
-        AppendMenuW(PopupArray[TabIndentLevel], MenuOption(False, FileExists2(Text)), LineIndex + 1, PChar(string(ExtractFileName(Text))));
+        AppendMenu(PopupArray[TabIndentLevel], MenuOption(False, FileExists2(Text)), LineIndex + 1, PChar(string(ExtractFileName(Text))));
     end
     else
-      AppendMenuW(PopupArray[TabIndentLevel], MF_STRING or MF_DISABLED, LineIndex + 1, PChar(Text));
+      AppendMenu(PopupArray[TabIndentLevel], MF_STRING or MF_DISABLED, LineIndex + 1, PChar(Text));
   end;
   procedure AppendMenuPopFunc(TabIndentLevel: NativeInt;
     Text: string);
   begin
-    AppendMenuW(PopupArray[TabIndentLevel], MF_POPUP,
+    AppendMenu(PopupArray[TabIndentLevel], MF_POPUP,
       PopupArray[TabIndentLevel + 1], PChar(string(ExtractFileName(Text))));
   end;
 
@@ -257,13 +257,17 @@ begin
     end;
     if List.Count <> 0 then
       AppendMenu(PopupArray[0], MF_SEPARATOR, 0, '');
-    AppendMenuW(PopupArray[0], MenuOption(False, EditingFileName <> ''), List.Count + 1, 'お気に入りに追加(&A)');
+    AppendMenu(PopupArray[0], MenuOption(False, EditingFileName <> ''), List.Count + 1, 'お気に入りに追加(&A)');
     AppendMenu(PopupArray[0], MF_STRING, List.Count + 2, 'お気に入りの整理(&O)...');
     if (GetKeyState(VK_SHIFT) and $80 > 0) or
       (GetKeyState(VK_CONTROL) and $80 > 0) then
       Editor_GetCaretPos(hwnd, POS_DEV, @CaretPoint)
     else
+{$IF CompilerVersion > 22.9}
+      Winapi.Windows.GetCursorPos(CaretPoint);
+{$ELSE}
       Windows.GetCursorPos(CaretPoint);
+{$IFEND}
     PopupMenuResult := NativeInt(TrackPopupMenu(PopupArray[0], TPM_RETURNCMD, CaretPoint.X, CaretPoint.Y, 0, hwnd, nil));
     if (1 <= PopupMenuResult) and (PopupMenuResult <= List.Count) then
     begin
@@ -347,5 +351,6 @@ exports
   PluginProc;
 
 begin
+  // ReportMemoryLeaksOnShutdown := True;
 
 end.
