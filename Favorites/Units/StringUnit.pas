@@ -129,6 +129,11 @@ unit StringUnit;
 
 interface
 
+// modified begin
+{$HINTS OFF}
+{$WARNINGS OFF}
+// modified end
+
 uses
 //  Types,
   Windows,

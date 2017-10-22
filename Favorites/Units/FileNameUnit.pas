@@ -32,6 +32,11 @@
 //--Å£---------------------------Å¢-- }
 unit FileNameUnit;
 
+// modified begin
+{$HINTS OFF}
+{$WARNINGS OFF}
+// modified end
+
 interface
 
 uses
