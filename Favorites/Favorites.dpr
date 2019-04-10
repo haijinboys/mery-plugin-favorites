@@ -30,7 +30,7 @@ uses
 
 resourcestring
   SName = '‚¨‹C‚É“ü‚è';
-  SVersion = '2.3.1';
+  SVersion = '2.3.3';
 
 const
   IDS_MENU_TEXT = 1;
